@@ -23,6 +23,12 @@
  *   }
  * }
  */
+
+
+export interface Dependencies {
+  [packageName: string]: string;
+}
+
 export interface NPMPackage {
   name: string;
   description: string;
@@ -33,9 +39,8 @@ export interface NPMPackage {
     [version: string]: {
       name: string;
       version: string;
-      dependencies?: {
-        [packageName: string]: string;
-      };
+      dependencies?: Dependencies;
     };
   };
 }
+
