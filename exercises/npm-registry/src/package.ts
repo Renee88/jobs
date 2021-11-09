@@ -13,7 +13,7 @@ export const getPackage: RequestHandler = async function (req, res, next) {
     const dependencies = await getDependencies(name, version);
     const dependencyTree = await DependencyTree.getDependencyTree(name, version, dependencies);
 
-    return res.status(200).json({dependencyTree});
+    return res.status(200).json({...dependencyTree});
   } catch (error) {
     return next(error);
   }

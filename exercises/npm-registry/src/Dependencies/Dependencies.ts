@@ -7,14 +7,14 @@ export class DependencyTree {
     private pack?: Dependency;
 
     constructor(){
-        // createDependencyTree
+        // empty ctor
     }
 
-    public static async getDependencyTree(name: string, version: string, dependencies: Dependencies | undefined): Promise<DependencyTree> {
+    public static async getDependencyTree(name: string, version: string, dependencies: Dependencies | undefined): Promise<Dependency> {
         const dependencyTree: DependencyTree = new DependencyTree();
 
         dependencyTree.pack = dependencies ? await Package.createPackage(name, version, dependencies) : new LeafDependency(name, version);
-        return dependencyTree;
+        return dependencyTree.pack;
     }
 
     private static stringifyDependencyTree(dependencyTree: DependencyTree): string {
