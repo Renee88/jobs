@@ -16,10 +16,6 @@ export class DependencyTree {
         dependencyTree.pack = dependencies ? await Package.createPackage(name, version, dependencies) : new LeafDependency(name, version);
         return dependencyTree.pack;
     }
-
-    private static stringifyDependencyTree(dependencyTree: DependencyTree): string {
-        return JSON.stringify(dependencyTree);
-    }
 }
 
 class LeafDependency implements Dependency{
@@ -66,26 +62,25 @@ class Package implements Dependency {
         return this.dependencies;
     }
 
-    public static async createPackage(name:string, version:string, dependencies: Dependencies): Promise<Dependency>{
+    public static async createPackage(name:string, version:string, dependencies: Dependencies | undefined): Promise<Dependency>{
         const dependencyArr: Dependency[] = [];
-        let depEntries = Object.entries(dependencies);
+        let depEntries = dependencies ? Object.entries(dependencies) : [];
         const pack: Package = new Package(name, version);
 
         for(let [name, version] of depEntries){
             const dependencies  = await getDependencies(name, version);
-
             if(Package.isParentDependency(dependencies)){
-                dependencyArr.push(new Package(name, version))
+                dependencyArr.push(await Package.createPackage(name, version, dependencies))
             } else {
                 dependencyArr.push(new LeafDependency(name, version));
             }
         }
         pack.dependencies = dependencyArr;
-
+        
         return pack;
     }
 
     private static isParentDependency(dependencies: Dependencies | undefined): boolean {
-        return undefined === dependencies;
+        return undefined !== dependencies;
     }
 }
